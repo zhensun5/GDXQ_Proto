@@ -1,0 +1,19 @@
+global:
+    market_name: "NYSE"
+
+grouped_daily:
+    run_config_file: "./run_configs/grouped_daily_config.yaml"
+    adjusted: True
+    raw: False
+    locale: "us"
+    market_type: "stocks"
+    include_otc: False
+    params: None
+
+tickers:
+    market: "stocks"
+    active: True
+    sort: "ticker"
+    order: "asc"
+    limit: 1000
+

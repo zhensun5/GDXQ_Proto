@@ -20,11 +20,11 @@ class MarketDataAggregatesResponse:
     queryCount: int
     resultsCount: int
     adjusted: bool
-    results: List[AggregateResult] = field(default_factory=list)
     status: str
     request_id: str
     count: int
     next_url: Optional[str]
+    results: List[AggregateResult] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, data: dict) -> Optional['MarketDataAggregatesResponse']:

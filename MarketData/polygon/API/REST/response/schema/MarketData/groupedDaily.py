@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
-from datetime import datetime
 import pandas as pd
 
 @dataclass
 class AggregateResult:
-    v: int    # Volume
+    T: str    # Ticker symbol
+    v: float  # Volume
     vw: float # Volume-weighted average price
     o: float  # Open price
     c: float  # Close price
@@ -15,19 +15,17 @@ class AggregateResult:
     n: int    # Number of transactions
 
 @dataclass
-class MarketDataAggregatesResponse:
-    ticker: str
+class PolygonAggsResponse:
     queryCount: int
     resultsCount: int
     adjusted: bool
-    results: List[AggregateResult] = field(default_factory=list)
     status: str
     request_id: str
     count: int
-    next_url: Optional[str]
+    results: List[AggregateResult] = field(default_factory=list)
 
     @classmethod
-    def from_dict(cls, data: dict) -> Optional['MarketDataAggregatesResponse']:
+    def from_dict(cls, data: dict) -> Optional['AggregatesResponse']:
         if data.get('status') != 'OK':
             print(f"Error: Response status is {data.get('status')}")
             return None
@@ -37,15 +35,13 @@ class MarketDataAggregatesResponse:
             return None
 
         return cls(
-            ticker=data.get('ticker', ''),
             queryCount=data.get('queryCount', 0),
             resultsCount=data.get('resultsCount', 0),
             adjusted=data.get('adjusted', False),
             results=[AggregateResult(**result) for result in data.get('results', [])],
             status=data.get('status', ''),
             request_id=data.get('request_id', ''),
-            count=data.get('count', 0),
-            next_url=data.get('next_url')
+            count=data.get('count', 0)
         )
 
     def to_dataframe(self) -> pd.DataFrame:
@@ -61,7 +57,17 @@ class MarketDataAggregatesResponse:
 
 # # Usage example
 # response_data = {
-#     # ... (your provided data)
+#     "queryCount": 10637,
+#     "resultsCount": 10637,
+#     "adjusted": True,
+#     "results": [
+#         {"T": "DEI", "v": 1.427613e+06, "vw": 17.548, "o": 17.52, "c": 17.54, "h": 17.725, "l": 17.26, "t": 1727812800000, "n": 13636},
+#         {"T": "KORE", "v": 4436, "vw": 2.215, "o": 2.26, "c": 2.14, "h": 2.32, "l": 2.14, "t": 1727812800000, "n": 67},
+#         # ... (other results)
+#     ],
+#     "status": "OK",
+#     "request_id": "132a1e26a7efa65bddbfe705b19d591f",
+#     "count": 10637
 # }
 
 # parsed_response = PolygonAggsResponse.from_dict(response_data)
